@@ -1,6 +1,7 @@
 import { Square } from './Square';
 import { Knight } from './Knight';
 import PropTypes from 'prop-types';
+import {canMoveKnight, moveKnight} from '../Game';
 
 /**
  * @param {number} i
@@ -15,11 +16,25 @@ const renderSquare = (i, [knightX, knightY]) => {
   const piece = isKnightHere ? <Knight /> : null;
 
   return (
-    <div key={i} style={{ width: '12.5%', height: '12.5%' }}>
+    <div
+      key={i}
+      style={{
+        width: '12.5%',
+        height: '12.5%',
+        cursor: canMoveKnight(x, y) ? 'pointer' : 'initial'
+      }}
+      onClick={() => handleSquareClick(x, y)}
+    >
       <Square isBlack={isBlack}>{piece}</Square>
     </div>
   )
 }
+
+const handleSquareClick = (toX, toY) => {
+  if (canMoveKnight(toX, toY)) {
+    moveKnight(toX, toY);
+  }
+};
 
 /**
  * @param {[number, number]} knightPosition
