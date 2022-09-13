@@ -1,7 +1,8 @@
-import { Square } from './Square';
-import { Knight } from './Knight';
 import PropTypes from 'prop-types';
-import {canMoveKnight, moveKnight} from '../Game';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { BoardSquare } from './BoardSquare';
+import { Knight } from './Knight';
 
 /**
  * @param {number} i
@@ -11,9 +12,6 @@ import {canMoveKnight, moveKnight} from '../Game';
 const renderSquare = (i, [knightX, knightY]) => {
   const x = i % 8;
   const y = Math.floor(i / 8);
-  const isKnightHere = x === knightX && y === knightY;
-  const isBlack = (x + y) % 2 === 1;
-  const piece = isKnightHere ? <Knight /> : null;
 
   return (
     <div
@@ -21,20 +19,20 @@ const renderSquare = (i, [knightX, knightY]) => {
       style={{
         width: '12.5%',
         height: '12.5%',
-        cursor: canMoveKnight(x, y) ? 'pointer' : 'initial'
       }}
-      onClick={() => handleSquareClick(x, y)}
     >
-      <Square isBlack={isBlack}>{piece}</Square>
+      <BoardSquare x={x} y={y}>
+        {renderPiece(x, y, knightX, knightY)}
+      </BoardSquare>
     </div>
   )
 }
 
-const handleSquareClick = (toX, toY) => {
-  if (canMoveKnight(toX, toY)) {
-    moveKnight(toX, toY);
+function renderPiece(x, y, knightX, knightY) {
+  if (x === knightX && y === knightY) {
+    return <Knight />
   }
-};
+}
 
 /**
  * @param {[number, number]} knightPosition
@@ -48,19 +46,21 @@ export const Board = ({ knightPosition }) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        width: '400px',
-        height: '400px',
-        margin: '20px',
-        borderWidth: '5px',
-        borderStyle: 'outset',
-      }}
-    >
-      {squares}
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          width: '400px',
+          height: '400px',
+          margin: '20px',
+          borderWidth: '5px',
+          borderStyle: 'outset',
+        }}
+      >
+        {squares}
+      </div>
+    </DndProvider>
   );
 };
 

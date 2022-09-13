@@ -1,25 +1,50 @@
+import {DragPreviewImage, useDrag} from 'react-dnd';
+import {ItemTypes} from '../constants';
+
 /**
  * @return {JSX.Element}
  * @constructor
  */
 export const Knight = () => {
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
+    type: ItemTypes.KNIGHT,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging()
+    })
+  }))
+
   return (
-    <div style={{
-      display: 'flex',
-      width: '100%',
-      height: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <span
+    <>
+      <DragPreviewImage
+        connect={preview}
+        src={'./horse.png'}
         style={{
-          display: 'inline-block',
-          fontSize: '40px',
-          fontWeight: 'bold',
+          width: '40px',
+          height: 'auto',
+        }}
+      />
+      <div
+        ref={drag}
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: isDragging ? 0.5 : 1,
+          cursor: 'move',
         }}
       >
-        ♘
-      </span>
-    </div>
+        <span
+          style={{
+            display: 'inline-block',
+            fontSize: 40,
+            fontWeight: 'bold',
+          }}
+        >
+          ♘
+        </span>
+      </div>
+    </>
   );
 }
