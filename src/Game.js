@@ -1,31 +1,56 @@
-let knightPosition = [1, 7];
-let observer = null;
+export class Game {
+  /**
+   * @type {[number, number]}
+   */
+  knightPosition = [1, 7];
 
-const emitChange = () => {
-  observer(knightPosition);
-};
+  /**
+   * @type {function[]}
+   */
+  observers = [];
 
-export const observe = (o) => {
-  if (observer) {
-    throw new Error('You cannot add multiple observers, currently only one observer is supported.');
-  }
+  /**
+   * @param {function} newObserver
+   * @return {() => void}
+   */
+  observe(newObserver) {
+    this.observers.push(newObserver);
+    this.emitChange();
 
-  observer = o;
-  emitChange();
-};
+    return () => {
+      this.observers = this.observers.filter((observer) => observer !== newObserver)
+    };
+  };
 
-export const canMoveKnight = (toX, toY) => {
-  const [x, y] = knightPosition;
-  const dx = toX - x;
-  const dy = toY - y;
+  /**
+   * @param {number} toX
+   * @param {number} toY
+   * @return {boolean}
+   */
+  canMoveKnight(toX, toY) {
+    const [x, y] = this.knightPosition;
+    const dx = toX - x;
+    const dy = toY - y;
 
-  return (
-    (Math.abs(dx) === 2 && Math.abs(dy) === 1) ||
-    (Math.abs(dx) === 1 && Math.abs(dy) === 2)
-  );
-};
+    return (
+      (Math.abs(dx) === 2 && Math.abs(dy) === 1) ||
+      (Math.abs(dx) === 1 && Math.abs(dy) === 2)
+    );
+  };
 
-export const moveKnight = (toX, toY) => {
-  knightPosition = [toX, toY];
-  emitChange();
-};
+  /**
+   * @param {number} toX
+   * @param {number} toY
+   */
+  moveKnight(toX, toY) {
+    this.knightPosition = [toX, toY];
+    this.emitChange();
+  };
+
+  /**
+   * @return void
+   */
+  emitChange() {
+    this.observers.forEach((observer) => observer && observer(this.knightPosition));
+  };
+}

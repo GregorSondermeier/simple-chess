@@ -1,17 +1,26 @@
-import {useDrop} from 'react-dnd';
-import {Square} from './Square';
-import {ItemTypes} from '../constants';
-import {canMoveKnight, moveKnight} from '../Game';
-import {DropOverlay} from './DropOverlay';
+import PropTypes from 'prop-types';
+import { useDrop } from 'react-dnd';
+import { Square } from './Square';
+import { ItemTypes, OverlayTypes } from '../constants';
+import { DropOverlay } from './DropOverlay';
 
-export const BoardSquare = ({ x, y, children }) => {
+/**
+ * @param {Object} props
+ * @param {number} props.x
+ * @param {number} props.y
+ * @param {JSX.Element} props.children
+ * @param {Game} props.game
+ * @return {JSX.Element}
+ * @constructor
+ */
+export const BoardSquare = ({ x, y, children, game }) => {
   const isBlack = (x + y) % 2 === 1;
 
   const [{ canDrop, isOver }, drop] = useDrop(
     () => ({
       accept: ItemTypes.KNIGHT,
-      canDrop: () => canMoveKnight(x, y),
-      drop: () => moveKnight(x, y),
+      canDrop: () => game.canMoveKnight(x, y),
+      drop: () => game.moveKnight(x, y),
       collect: (monitor) => ({
         canDrop: !!monitor.canDrop(),
         isOver: !!monitor.isOver(),
@@ -30,9 +39,16 @@ export const BoardSquare = ({ x, y, children }) => {
       }}
     >
       <Square isBlack={isBlack}>{children}</Square>
-      {isOver && !canDrop && <DropOverlay color="red" />}
-      {!isOver && canDrop && <DropOverlay color="yellow" />}
-      {isOver && canDrop && <DropOverlay color="green" />}
+      {isOver && !canDrop && <DropOverlay type={OverlayTypes.IllegalMoveHover} />}
+      {!isOver && canDrop && <DropOverlay type={OverlayTypes.PossibleMove} />}
+      {isOver && canDrop && <DropOverlay type={OverlayTypes.LegalMoveHover} />}
     </div>
   );
-}
+};
+
+BoardSquare.propTypes = {
+  x: PropTypes.number,
+  y: PropTypes.number,
+  children: PropTypes.element,
+  game: PropTypes.object,
+};

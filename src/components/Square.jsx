@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 
 /**
- * @param {boolean} isBlack
- * @param {JSX.Element} children
+ * @param {Object} props
+ * @param {boolean} props.isBlack
+ * @param {JSX.Element} props.children
  * @return {JSX.Element}
  * @constructor
  */
