@@ -1,5 +1,5 @@
 {
-  "name": "chess",
+  "name": "simple-chess",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
   },
   "scripts": {
     "dev": "react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
